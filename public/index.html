@@ -1,0 +1,57 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Input User Data</title>
+    <style>body{font-family:Arial,Helvetica,sans-serif;max-width:860px;margin:24px auto;padding:0 16px}form,table{margin-top:16px}table{width:100%;border-collapse:collapse}th,td{border:1px solid #ddd;padding:8px}th{background:#f5f5f5;text-align:left}</style>
+  </head>
+  <body>
+    <h1>Users</h1>
+    <form id="user-form">
+      <input name="name" placeholder="Name" required />
+      <input name="age" type="number" placeholder="Age" required />
+      <input name="date_of_birth" type="date" placeholder="Date of Birth" required />
+      <input name="favorite_food" placeholder="Favorite Food" required />
+      <button type="submit">Create</button>
+    </form>
+
+    <table id="users-table">
+      <thead>
+        <tr><th>ID</th><th>Name</th><th>Age</th><th>DOB</th><th>Food</th><th>Actions</th></tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <script>
+      async function fetchUsers(){
+        const res = await fetch('/api/users');
+        const data = await res.json();
+        const tbody = document.querySelector('#users-table tbody');
+        tbody.innerHTML = '';
+        for(const u of data){
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td>${u.id}</td><td>${u.name}</td><td>${u.age}</td><td>${new Date(u.date_of_birth).toISOString().slice(0,10)}</td><td>${u.favorite_food}</td><td><button data-id="${u.id}" class="delete">Delete</button></td>`;
+          tbody.appendChild(tr);
+        }
+      }
+      document.getElementById('user-form').addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        const form = e.target;
+        const body = Object.fromEntries(new FormData(form).entries());
+        await fetch('/api/users',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+        form.reset();
+        fetchUsers();
+      });
+      document.querySelector('#users-table').addEventListener('click', async (e)=>{
+        if(e.target.matches('button.delete')){
+          const id = e.target.getAttribute('data-id');
+          await fetch('/api/users/'+id,{method:'DELETE'});
+          fetchUsers();
+        }
+      });
+      fetchUsers();
+    </script>
+  </body>
+  </html>
+
