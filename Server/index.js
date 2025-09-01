@@ -12,15 +12,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Serve static files from the React app build directory
-app.use(express.static(path.join(__dirname, '../Client/dist')));
+app.use(express.static(path.join(__dirname, '../Client')));
 
 // Routes
 const usersRouter = require('./src/routes/users');
 app.use('/api/users', usersRouter);
 
-// Catch all handler: send back React's index.html file for any non-API routes
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../Client/dist/index.html'));
+// Catch all handler: send back React's index.html file for any non-API route
+app.get('*', (req,res) => {
+  res.sendFile(path.join(__dirname, '../Client/index.html'));
 });
 
 const port = process.env.PORT || 3001;
