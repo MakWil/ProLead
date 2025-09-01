@@ -15,8 +15,10 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 80;
+const host = process.env.HOST || '0.0.0.0';
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
+  console.log('Acess your application at : http://172.232.238.95:$(port)');
 });
 
