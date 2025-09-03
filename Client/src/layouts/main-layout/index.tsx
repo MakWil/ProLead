@@ -8,6 +8,7 @@ import Sidebar from './sidebar/Sidbar';
 const drawerWidth = 270;
 
 const MainLayout = () => {
+  console.log('MainLayout rendered');
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
 
