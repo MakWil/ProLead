@@ -18,8 +18,8 @@ app.use(express.static(path.join(__dirname, '../Client/dist')));
 const usersRouter = require('./src/routes/users');
 app.use('/api/users', usersRouter);
 
-// Catch all handler: send back React's index.html file for any non-API routes
-app.get('*', (req, res) => {
+// Catch all handler: send back React's index.html file for any non-API routes (exclude /api)
+app.get(/^\/(?!api).*/, (req, res) => {
   res.sendFile(path.join(__dirname, '../Client/dist/index.html'));
 });
 

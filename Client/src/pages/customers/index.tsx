@@ -1,5 +1,23 @@
-import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, LinearProgress, Stack, TextField } from '@mui/material';
-import { DataGrid, GridApi, GridColDef, GridRenderCellParams, GridRowId, GridSlots, useGridApiRef } from '@mui/x-data-grid';
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  LinearProgress,
+  Stack,
+  TextField,
+} from '@mui/material';
+import {
+  DataGrid,
+  GridApi,
+  GridColDef,
+  GridRenderCellParams,
+  GridRowId,
+  GridSlots,
+  useGridApiRef,
+} from '@mui/x-data-grid';
 import CustomDataGridFooter from 'components/common/table/CustomDataGridFooter';
 import CustomDataGridHeader from 'components/common/table/CustomDataGridHeader';
 import CustomDataGridNoRows from 'components/common/table/CustomDataGridNoRows';
@@ -106,7 +124,7 @@ const CustomersPage = () => {
     event.preventDefault();
     if (editId == null) return;
     try {
-      const res = await fetch(`/api/users/${editId}` , {
+      const res = await fetch(`/api/users/${editId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formValues),
@@ -140,42 +158,67 @@ const CustomersPage = () => {
     setEditOpen(true);
   };
 
-  const columns: GridColDef<User>[] = useMemo(() => [
-    { field: 'id', headerName: 'ID', width: 80 },
-    { field: 'name', headerName: 'Name', minWidth: 160, flex: 1 },
-    { field: 'age', headerName: 'Age', width: 100 },
-    {
-      field: 'date_of_birth',
-      headerName: 'Date of Birth',
-      minWidth: 160,
-      valueFormatter: (value) => value ? dayjs(value as string).format('DD.MM.YYYY') : '',
-    },
-    { field: 'favorite_food', headerName: 'Favorite Food', minWidth: 160, flex: 1 },
-    {
-      field: 'actions',
-      headerName: 'Actions',
-      sortable: false,
-      filterable: false,
-      width: 160,
-      renderCell: (params: GridRenderCellParams<User>) => {
-        return (
-          <Stack direction="row" spacing={1}>
-            <Button size="small" variant="outlined" onClick={() => beginEdit(params.row)}>Edit</Button>
-            <Button size="small" color="error" variant="outlined" onClick={() => handleDelete(params.row.id)}>Delete</Button>
-          </Stack>
-        );
+  const columns: GridColDef<User>[] = useMemo(
+    () => [
+      { field: 'id', headerName: 'ID', width: 80 },
+      { field: 'name', headerName: 'Name', minWidth: 160, flex: 1 },
+      { field: 'age', headerName: 'Age', width: 100 },
+      {
+        field: 'date_of_birth',
+        headerName: 'Date of Birth',
+        minWidth: 160,
+        valueFormatter: (value) => (value ? dayjs(value as string).format('DD.MM.YYYY') : ''),
       },
-    },
-  ], []);
+      { field: 'favorite_food', headerName: 'Favorite Food', minWidth: 160, flex: 1 },
+      {
+        field: 'actions',
+        headerName: 'Actions',
+        sortable: false,
+        filterable: false,
+        width: 160,
+        renderCell: (params: GridRenderCellParams<User>) => {
+          return (
+            <Stack direction="row" spacing={1}>
+              <Button size="small" variant="outlined" onClick={() => beginEdit(params.row)}>
+                Edit
+              </Button>
+              <Button
+                size="small"
+                color="error"
+                variant="outlined"
+                onClick={() => handleDelete(params.row.id)}
+              >
+                Delete
+              </Button>
+            </Stack>
+          );
+        },
+      },
+    ],
+    [],
+  );
 
   return (
     <Stack sx={{ gap: 2 }}>
-      <Stack direction={{ xs: 'column', sm: 'row' }} alignItems={{ sm: 'center' }} justifyContent="space-between">
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        alignItems={{ sm: 'center' }}
+        justifyContent="space-between"
+      >
         <Box />
-        <Button variant="contained" onClick={handleOpenAdd}>Add User</Button>
+        <Button variant="contained" onClick={handleOpenAdd}>
+          Add User
+        </Button>
       </Stack>
 
-      <Box sx={{ overflow: 'hidden', minHeight: 0, position: 'relative', height: { xs: 'auto', sm: 1 } }}>
+      <Box
+        sx={{
+          overflow: 'hidden',
+          minHeight: 0,
+          position: 'relative',
+          height: { xs: 'auto', sm: 1 },
+        }}
+      >
         <SimpleBar>
           <DataGrid
             autoHeight={false}
@@ -210,36 +253,109 @@ const CustomersPage = () => {
             }}
             initialState={{ pagination: { paginationModel: { page: 1, pageSize: 10 } } }}
             pageSizeOptions={[5, 10, 25]}
-            sx={{ boxShadow: 1, px: 3, borderColor: 'common.white', overflow: 'auto', height: 1, width: 1 }}
+            sx={{
+              boxShadow: 1,
+              px: 3,
+              borderColor: 'common.white',
+              overflow: 'auto',
+              height: 1,
+              width: 1,
+            }}
           />
         </SimpleBar>
       </Box>
 
-      <Dialog open={addOpen} onClose={handleCloseAdd} fullWidth maxWidth="sm" component="form" onSubmit={submitAdd}>
+      <Dialog
+        open={addOpen}
+        onClose={handleCloseAdd}
+        fullWidth
+        maxWidth="sm"
+        component="form"
+        onSubmit={submitAdd}
+      >
         <DialogTitle>Add User</DialogTitle>
         <DialogContent sx={{ pt: 2, display: 'grid', gap: 2 }}>
-          <TextField label="Name" name="name" value={formValues.name} onChange={handleFormChange} required />
-          <TextField label="Age" name="age" type="number" value={formValues.age ?? ''} onChange={handleFormChange} />
-          <TextField label="Date of Birth" name="date_of_birth" type="date" value={formValues.date_of_birth ?? ''} onChange={handleFormChange} InputLabelProps={{ shrink: true }} />
-          <TextField label="Favorite Food" name="favorite_food" value={formValues.favorite_food ?? ''} onChange={handleFormChange} />
+          <TextField
+            label="Name"
+            name="name"
+            value={formValues.name}
+            onChange={handleFormChange}
+            required
+          />
+          <TextField
+            label="Age"
+            name="age"
+            type="number"
+            value={formValues.age ?? ''}
+            onChange={handleFormChange}
+          />
+          <TextField
+            label="Date of Birth"
+            name="date_of_birth"
+            type="date"
+            value={formValues.date_of_birth ?? ''}
+            onChange={handleFormChange}
+            InputLabelProps={{ shrink: true }}
+          />
+          <TextField
+            label="Favorite Food"
+            name="favorite_food"
+            value={formValues.favorite_food ?? ''}
+            onChange={handleFormChange}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseAdd}>Cancel</Button>
-          <Button type="submit" variant="contained">Save</Button>
+          <Button type="submit" variant="contained">
+            Save
+          </Button>
         </DialogActions>
       </Dialog>
 
-      <Dialog open={editOpen} onClose={handleCloseEdit} fullWidth maxWidth="sm" component="form" onSubmit={submitEdit}>
+      <Dialog
+        open={editOpen}
+        onClose={handleCloseEdit}
+        fullWidth
+        maxWidth="sm"
+        component="form"
+        onSubmit={submitEdit}
+      >
         <DialogTitle>Edit User</DialogTitle>
         <DialogContent sx={{ pt: 2, display: 'grid', gap: 2 }}>
-          <TextField label="Name" name="name" value={formValues.name} onChange={handleFormChange} required />
-          <TextField label="Age" name="age" type="number" value={formValues.age ?? ''} onChange={handleFormChange} />
-          <TextField label="Date of Birth" name="date_of_birth" type="date" value={formValues.date_of_birth ?? ''} onChange={handleFormChange} InputLabelProps={{ shrink: true }} />
-          <TextField label="Favorite Food" name="favorite_food" value={formValues.favorite_food ?? ''} onChange={handleFormChange} />
+          <TextField
+            label="Name"
+            name="name"
+            value={formValues.name}
+            onChange={handleFormChange}
+            required
+          />
+          <TextField
+            label="Age"
+            name="age"
+            type="number"
+            value={formValues.age ?? ''}
+            onChange={handleFormChange}
+          />
+          <TextField
+            label="Date of Birth"
+            name="date_of_birth"
+            type="date"
+            value={formValues.date_of_birth ?? ''}
+            onChange={handleFormChange}
+            InputLabelProps={{ shrink: true }}
+          />
+          <TextField
+            label="Favorite Food"
+            name="favorite_food"
+            value={formValues.favorite_food ?? ''}
+            onChange={handleFormChange}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleCloseEdit}>Cancel</Button>
-          <Button type="submit" variant="contained">Update</Button>
+          <Button type="submit" variant="contained">
+            Update
+          </Button>
         </DialogActions>
       </Dialog>
     </Stack>
