@@ -1,6 +1,7 @@
 import PageLoader from 'components/loading/PageLoader';
 import Splash from 'components/loading/Splash';
 import AuthLayout from 'layouts/auth-layout';
+import ProtectedRoute from 'components/ProtectedRoute';
 import { lazy, Suspense } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import paths, { rootPaths } from './path';
@@ -38,7 +39,9 @@ export const routes = [
         path: paths.default,
         element: (
           <Suspense fallback={<PageLoader />}>
-            <MainLayout />
+            <ProtectedRoute>
+              <MainLayout />
+            </ProtectedRoute>
           </Suspense>
         ),
         children: [

@@ -11,30 +11,80 @@ import {
   Stack,
   TextField,
   Typography,
+  Alert,
+  CircularProgress,
 } from '@mui/material';
 import IconifyIcon from 'components/base/IconifyIcon';
 import { useState } from 'react';
+import { useAuth } from 'contexts/AuthContext';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const LoginForm = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const from = location.state?.from?.pathname || '/';
+
   const handleClickShowPassword = () => {
     setShowPassword((prevShowPassword) => !prevShowPassword);
   };
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      await login(email, password);
+      navigate(from, { replace: true });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Login failed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <Box
+      component="form"
+      onSubmit={handleSubmit}
       sx={{
         mt: { sm: 5, xs: 2.5 },
       }}
     >
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
       <Stack spacing={3}>
-        <TextField fullWidth variant="outlined" id="mail" type="text" label="Email" />
+        <TextField
+          fullWidth
+          variant="outlined"
+          id="email"
+          type="email"
+          label="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
         <TextField
           fullWidth
           variant="outlined"
           id="password"
           type={showPassword ? 'text' : 'password'}
           label="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -56,7 +106,9 @@ const LoginForm = () => {
       </Stack>
       <FormGroup sx={{ my: 2 }}>
         <FormControlLabel
-          control={<Checkbox />}
+          control={
+            <Checkbox checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)} />
+          }
           label="Keep me signed in"
           sx={{
             color: 'text.secondary',
@@ -68,11 +120,11 @@ const LoginForm = () => {
         variant="contained"
         size="large"
         fullWidth
-        component={Link}
-        href="#!"
         type="submit"
+        disabled={loading}
+        startIcon={loading ? <CircularProgress size={20} /> : null}
       >
-        Sign In
+        {loading ? 'Signing In...' : 'Sign In'}
       </Button>
       <Stack
         sx={{
