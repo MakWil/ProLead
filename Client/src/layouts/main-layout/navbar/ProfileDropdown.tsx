@@ -13,27 +13,16 @@ import AvatarImage from 'assets/images/avatar.svg';
 import IconifyIcon from 'components/base/IconifyIcon';
 import { profileOptions } from 'data/navbar/menu-data';
 import { useState } from 'react';
-import { useAuth } from 'contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
 
 const ProfileDropdown = () => {
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const open = Boolean(anchorEl);
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
-
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
 
   const handleClose = () => {
     setAnchorEl(null);
-  };
-
-  const handleLogout = () => {
-    logout();
-    navigate('/authentication/login');
-    handleClose();
   };
   return (
     <Box
@@ -67,7 +56,7 @@ const ProfileDropdown = () => {
               display: { xs: 'none', sm: 'block' },
             }}
           >
-            {user?.name || 'User'}
+            X’eriya Ponald
           </Typography>
         </Stack>
       </ButtonBase>
@@ -107,7 +96,6 @@ const ProfileDropdown = () => {
           <Button
             size="small"
             variant="outlined"
-            onClick={handleLogout}
             sx={{
               mt: 1.5,
               width: '80%',

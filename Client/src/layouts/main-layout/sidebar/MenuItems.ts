@@ -69,8 +69,8 @@ const Menuitems: IMenuitems[] = [
     id: uniqueId(),
     title: 'Customers',
     icon: CustomersIcon,
-    href: '/customers',
-    available: true,
+    href: '#!',
+    available: false,
   },
   {
     id: uniqueId(),
