@@ -116,7 +116,7 @@ export const routes = [
 ];
 
 const router = createBrowserRouter(routes, {
-  basename: '/',
+  basename: '/modernize-mui-admin',
 });
 
 export default router;
