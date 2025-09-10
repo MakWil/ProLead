@@ -1,6 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const { pool } = require('../db');
+const { authLogger } = require('../utils/logger');
 
 const router = express.Router();
 
@@ -24,6 +25,8 @@ router.post('/', async (req, res) => {
     );
 
     if (result.rows.length === 0) {
+      // Log failed login attempt
+      authLogger.loginFailed(email, req, 'User not found');
       return res.status(401).json({ 
         error: 'Invalid email or password' 
       });
@@ -34,10 +37,18 @@ router.post('/', async (req, res) => {
     // Check password
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
+      // Log failed login attempt
+      authLogger.loginFailed(email, req, 'Invalid password');
       return res.status(401).json({ 
         error: 'Invalid email or password' 
       });
     }
+
+    // Log successful login
+    authLogger.loginSuccess(email, req, { 
+      user_id: user.id, 
+      user_name: user.name 
+    });
 
     // Return user data (without password)
     res.json({

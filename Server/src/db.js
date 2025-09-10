@@ -79,6 +79,28 @@ async function initializeDatabase() {
       CREATE INDEX IF NOT EXISTS idx_otp_expires_at ON otp_codes(expires_at);
     `);
     console.log('✅ OTP table indexes created successfully');
+
+    // Create user_logs table for Winston logging with JSONB
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS user_logs (
+        id SERIAL PRIMARY KEY,
+        log_data JSONB NOT NULL,
+        created_at TIMESTAMP DEFAULT NOW()
+      );
+    `);
+    console.log('✅ User_logs table created/verified successfully');
+
+    // Create JSONB indexes for efficient querying
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_user_logs_jsonb ON user_logs USING GIN (log_data);
+    `);
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_user_logs_email ON user_logs USING BTREE ((log_data ->> 'email'));
+    `);
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_user_logs_event_type ON user_logs USING BTREE ((log_data ->> 'event_type'));
+    `);
+    console.log('✅ User_logs table indexes created successfully');
   } catch (err) {
     console.error('❌ Failed to create users table:', err.message);
     throw err;

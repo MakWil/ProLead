@@ -1,6 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const { pool } = require('../db');
+const { authLogger } = require('../utils/logger');
 
 const router = express.Router();
 
@@ -30,6 +31,8 @@ router.post('/', async (req, res) => {
     );
     
     if (existingUser.rows.length > 0) {
+      // Log failed registration attempt
+      authLogger.registerFailed(email, req, 'User already exists');
       return res.status(400).json({ 
         error: 'User already exists with this email' 
       });
@@ -46,6 +49,12 @@ router.post('/', async (req, res) => {
     );
 
     const user = result.rows[0];
+
+    // Log successful registration
+    authLogger.registerSuccess(email, req, { 
+      user_id: user.id, 
+      user_name: user.name 
+    });
 
     res.status(201).json({
       message: 'User registered successfully',

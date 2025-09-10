@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
 const { pool } = require('../db');
+const { authLogger } = require('../utils/logger');
 
 const router = express.Router();
 
@@ -45,6 +46,7 @@ router.post('/register', [
     // Check if user already exists
     const existingUser = await pool.query('SELECT id FROM user_info WHERE email = $1', [email]);
     if (existingUser.rows.length > 0) {
+      authLogger.registerFailed(email, req, 'User already exists');
       return res.status(400).json({ error: 'User already exists with this email' });
     }
 
@@ -59,6 +61,12 @@ router.post('/register', [
     );
 
     const user = result.rows[0];
+
+    // Log successful registration
+    authLogger.registerSuccess(email, req, { 
+      user_id: user.id, 
+      user_name: user.name 
+    });
 
     // Generate JWT token
     const token = jwt.sign(
@@ -104,6 +112,7 @@ router.post('/login', [
     );
 
     if (result.rows.length === 0) {
+      authLogger.loginFailed(email, req, 'User not found');
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
@@ -112,8 +121,15 @@ router.post('/login', [
     // Check password
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
+      authLogger.loginFailed(email, req, 'Invalid password');
       return res.status(401).json({ error: 'Invalid email or password' });
     }
+
+    // Log successful login
+    authLogger.loginSuccess(email, req, { 
+      user_id: user.id, 
+      user_name: user.name 
+    });
 
     // Generate JWT token
     const token = jwt.sign(
@@ -202,7 +218,12 @@ router.put('/profile', authenticateToken, [
 });
 
 // Logout endpoint (client-side token removal)
-router.post('/logout', (req, res) => {
+router.post('/logout', authenticateToken, (req, res) => {
+  // Log logout event
+  authLogger.logout(req.user.email, req, { 
+    user_id: req.user.userId 
+  });
+  
   res.json({ message: 'Logout successful' });
 });
 

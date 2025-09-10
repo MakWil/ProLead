@@ -1,6 +1,7 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const { pool } = require('../db');
+const { authLogger } = require('../utils/logger');
 
 const router = express.Router();
 
@@ -45,6 +46,12 @@ router.post('/request-otp', async (req, res) => {
       'INSERT INTO otp_codes (user_id, otp_code, expires_at) VALUES ($1, $2, $3)',
       [userId, otpCode, expiresAt]
     );
+
+    // Log password reset request
+    authLogger.passwordReset(email, req, { 
+      user_id: userId,
+      otp_expires_at: expiresAt 
+    });
 
     // For dev: return OTP directly (in production, send via email)
     return res.json({ 
@@ -130,6 +137,12 @@ router.post('/reset', async (req, res) => {
       await pool.query('ROLLBACK');
       throw err;
     }
+
+    // Log successful password reset
+    authLogger.passwordReset(email, req, { 
+      user_id: userId,
+      action: 'password_reset_completed' 
+    });
 
     return res.json({ message: 'Password reset successful' });
   } catch (err) {
