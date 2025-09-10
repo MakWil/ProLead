@@ -1,7 +1,11 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const { pool } = require('../db');
 const { authLogger } = require('../utils/logger');
+
+// JWT Secret (in production, this should be in environment variables)
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
 
 const router = express.Router();
 
@@ -56,8 +60,16 @@ router.post('/', async (req, res) => {
       user_name: user.name 
     });
 
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: user.id, email: user.email },
+      JWT_SECRET,
+      { expiresIn: '24h' }
+    );
+
     res.status(201).json({
       message: 'User registered successfully',
+      token,
       user: {
         id: user.id,
         email: user.email,

@@ -15,7 +15,7 @@ interface AuthContextType {
   token: string | null;
   login: (email: string, password: string) => Promise<void>;
   register: (userData: RegisterData) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
   loading: boolean;
   isAuthenticated: boolean;
 }
@@ -111,10 +111,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       if (response.ok) {
         setUser(data.user);
-        // For now, we'll use a simple token (in a real app, you'd get this from the server)
-        const simpleToken = 'user-logged-in';
-        setToken(simpleToken);
-        localStorage.setItem('token', simpleToken);
+        // Use the JWT token returned from the server
+        setToken(data.token);
+        localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
       } else {
         throw new Error(data.error || 'Login failed');
@@ -139,10 +138,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       if (response.ok) {
         setUser(data.user);
-        // For now, we'll use a simple token (in a real app, you'd get this from the server)
-        const simpleToken = 'user-logged-in';
-        setToken(simpleToken);
-        localStorage.setItem('token', simpleToken);
+        // Use the JWT token returned from the server
+        setToken(data.token);
+        localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
       } else {
         throw new Error(data.error || 'Registration failed');
@@ -153,11 +151,28 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    setToken(null);
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+  const logout = async () => {
+    try {
+      // Call backend logout endpoint with JWT token
+      if (token) {
+        await fetch(`${API_BASE_URL}/auth/logout`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+      }
+    } catch (error) {
+      console.error('Logout API call failed:', error);
+      // Continue with local logout even if API call fails
+    } finally {
+      // Clear local state and storage
+      setUser(null);
+      setToken(null);
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+    }
   };
 
   const value: AuthContextType = {

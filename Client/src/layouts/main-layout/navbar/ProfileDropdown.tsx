@@ -30,8 +30,8 @@ const ProfileDropdown = () => {
     setAnchorEl(null);
   };
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     navigate('/authentication/login');
     handleClose();
   };
