@@ -28,7 +28,7 @@ router.post('/request-otp', async (req, res) => {
     await cleanupExpiredOTPs();
 
     // Ensure user exists
-    const userRes = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
+    const userRes = await pool.query('SELECT id FROM user_info WHERE email = $1', [email]);
     if (userRes.rowCount === 0) return res.status(404).json({ error: 'User not found' });
 
     const userId = userRes.rows[0].id;
@@ -67,7 +67,7 @@ router.post('/verify-otp', async (req, res) => {
     // Clean up expired OTPs first
     await cleanupExpiredOTPs();
 
-    const userRes = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
+    const userRes = await pool.query('SELECT id FROM user_info WHERE email = $1', [email]);
     if (userRes.rowCount === 0) return res.status(404).json({ error: 'User not found' });
 
     const userId = userRes.rows[0].id;
@@ -100,7 +100,7 @@ router.post('/reset', async (req, res) => {
     // Clean up expired OTPs first
     await cleanupExpiredOTPs();
 
-    const userRes = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
+    const userRes = await pool.query('SELECT id FROM user_info WHERE email = $1', [email]);
     if (userRes.rowCount === 0) return res.status(404).json({ error: 'User not found' });
 
     const userId = userRes.rows[0].id;
@@ -123,7 +123,7 @@ router.post('/reset', async (req, res) => {
     // Update password and mark OTP as used
     await pool.query('BEGIN');
     try {
-      await pool.query('UPDATE users SET password = $1 WHERE id = $2', [hashed, userId]);
+      await pool.query('UPDATE user_info SET password = $1 WHERE id = $2', [hashed, userId]);
       await pool.query('UPDATE otp_codes SET used = TRUE WHERE id = $1', [otpId]);
       await pool.query('COMMIT');
     } catch (err) {
@@ -143,7 +143,7 @@ router.get('/otp-status/:email', async (req, res) => {
   try {
     const { email } = req.params;
     
-    const userRes = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
+    const userRes = await pool.query('SELECT id FROM user_info WHERE email = $1', [email]);
     if (userRes.rowCount === 0) return res.status(404).json({ error: 'User not found' });
 
     const userId = userRes.rows[0].id;

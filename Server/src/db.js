@@ -30,31 +30,29 @@ if (process.env.DATABASE_URL) {
   pool = new Pool(config);
 }
 
-// Create Users table if it doesn't exist
+// Create database tables if they don't exist
 async function initializeDatabase() {
   try {
-    // First, check if the table exists and what columns it has
-    const tableCheck = await pool.query(`
-      SELECT column_name 
-      FROM information_schema.columns 
-      WHERE table_name = 'users' AND table_schema = 'public'
-    `);
-    
-    console.log('Existing columns in users table:', tableCheck.rows.map(row => row.column_name));
-    
-    // Drop the existing table if it has the wrong schema
-    if (tableCheck.rows.length > 0 && !tableCheck.rows.some(row => row.column_name === 'email')) {
-      console.log('🔄 Dropping existing users table with old schema...');
-      await pool.query('DROP TABLE IF EXISTS users CASCADE');
-    }
-    
-    // Create the new table with correct schema
+    // Create user_info table for authentication
     await pool.query(`
-      CREATE TABLE IF NOT EXISTS users (
+      CREATE TABLE IF NOT EXISTS user_info (
         id SERIAL PRIMARY KEY,
         email VARCHAR(255) UNIQUE NOT NULL,
         password VARCHAR(255) NOT NULL,
         name VARCHAR(100) NOT NULL,
+        created_at TIMESTAMP DEFAULT NOW()
+      );
+    `);
+    console.log('✅ User_info table created/verified successfully');
+
+    // Create users table for customer data
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS users (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(100) NOT NULL,
+        age INTEGER,
+        date_of_birth DATE,
+        favorite_food VARCHAR(255),
         created_at TIMESTAMP DEFAULT NOW()
       );
     `);
@@ -64,7 +62,7 @@ async function initializeDatabase() {
     await pool.query(`
       CREATE TABLE IF NOT EXISTS otp_codes (
         id SERIAL PRIMARY KEY,
-        user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        user_id INTEGER NOT NULL REFERENCES user_info(id) ON DELETE CASCADE,
         otp_code VARCHAR(6) NOT NULL,
         created_at TIMESTAMP DEFAULT NOW(),
         expires_at TIMESTAMP NOT NULL,

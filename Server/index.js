@@ -11,6 +11,12 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Debug middleware to log all requests
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.path} - ${new Date().toISOString()}`);
+  next();
+});
+
 // Serve static files from the React app source directory
 app.use(express.static(path.join(__dirname, '../Client/dist')));
 
@@ -18,9 +24,13 @@ app.use(express.static(path.join(__dirname, '../Client/dist')));
 const registerRouter = require('./src/routes/register');
 const loginRouter = require('./src/routes/login');
 const passwordRouter = require('./src/routes/password');
+const usersRouter = require('./src/routes/users');
+const { router: authRouter } = require('./src/routes/auth');
 app.use('/api/register', registerRouter);
 app.use('/api/login', loginRouter);
 app.use('/api/password', passwordRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/auth', authRouter);
 
 // Catch all handler: send back React's index.html file for any non-API routes
 app.get(/^\/(?!api).*/, (req, res) => {
@@ -33,4 +43,6 @@ app.listen(port, () => {
   console.log(`📝 Registration endpoint: http://localhost:${port}/api/register`);
   console.log(`🔑 Login endpoint: http://localhost:${port}/api/login`);
   console.log(`🔒 Password endpoints: http://localhost:${port}/api/password/*`);
+  console.log(`👥 Users/Customers endpoint: http://localhost:${port}/api/users`);
+  console.log(`🔐 Auth endpoints: http://localhost:${port}/api/auth/*`);
 });

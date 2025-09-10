@@ -19,7 +19,7 @@ router.post('/', async (req, res) => {
 
     // Find user by email
     const result = await pool.query(
-      'SELECT id, email, password, name, created_at FROM users WHERE email = $1',
+      'SELECT id, email, password, name, created_at FROM user_info WHERE email = $1',
       [email]
     );
 

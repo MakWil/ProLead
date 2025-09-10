@@ -167,38 +167,6 @@ const RegisterForm = () => {
           onChange={handleChange}
           required
         />
-        <TextField
-          fullWidth
-          variant="outlined"
-          id="age"
-          name="age"
-          type="number"
-          label="Age (Optional)"
-          value={formData.age}
-          onChange={handleChange}
-          inputProps={{ min: 0, max: 150 }}
-        />
-        <TextField
-          fullWidth
-          variant="outlined"
-          id="date_of_birth"
-          name="date_of_birth"
-          type="date"
-          label="Date of Birth (Optional)"
-          value={formData.date_of_birth}
-          onChange={handleChange}
-          InputLabelProps={{ shrink: true }}
-        />
-        <TextField
-          fullWidth
-          variant="outlined"
-          id="favorite_food"
-          name="favorite_food"
-          type="text"
-          label="Favorite Food (Optional)"
-          value={formData.favorite_food}
-          onChange={handleChange}
-        />
         <Button
           color="primary"
           variant="contained"

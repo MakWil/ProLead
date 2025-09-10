@@ -5,15 +5,22 @@ const { pool } = require('../db');
 // Create
 router.post('/', async (req, res) => {
   try {
+    console.log('POST /api/users request received:', req.body);
     const { name, age, date_of_birth, favorite_food } = req.body;
+    
+    if (!name) {
+      return res.status(400).json({ error: 'Name is required' });
+    }
+    
     const result = await pool.query(
       'INSERT INTO users (name, age, date_of_birth, favorite_food) VALUES ($1, $2, $3, $4) RETURNING *',
       [name, age, date_of_birth, favorite_food]
     );
+    console.log('User created successfully:', result.rows[0]);
     res.status(201).json(result.rows[0]);
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Internal server error' });
+    console.error('Error creating user:', err);
+    res.status(500).json({ error: 'Internal server error: ' + err.message });
   }
 });
 
