@@ -16,9 +16,28 @@ import { useState } from 'react';
 import { useAuth } from 'contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
+interface FormData {
+  email: string;
+  password: string;
+  confirmPassword: string;
+  name: string;
+  age: string;
+  date_of_birth: string;
+  favorite_food: string;
+}
+
+interface RegisterData {
+  name: string;
+  email: string;
+  password: string;
+  age?: number;
+  date_of_birth?: string;
+  favorite_food?: string;
+}
+
 const RegisterForm = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     email: '',
     password: '',
     confirmPassword: '',
@@ -41,7 +60,7 @@ const RegisterForm = () => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
-    });
+    } as FormData);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -64,26 +83,24 @@ const RegisterForm = () => {
     }
 
     try {
-      const { confirmPassword, ...formDataWithoutConfirm } = formData;
-      
       // Create registerData with proper types
-      const registerData: any = {
-        name: formDataWithoutConfirm.name,
-        email: formDataWithoutConfirm.email,
-        password: formDataWithoutConfirm.password,
+      const registerData: RegisterData = {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
       };
-      
+
       // Add optional fields only if they have values
-      if (formDataWithoutConfirm.age && formDataWithoutConfirm.age !== '') {
-        registerData.age = parseInt(formDataWithoutConfirm.age);
+      if (formData.age && formData.age !== '') {
+        registerData.age = parseInt(formData.age);
       }
-      if (formDataWithoutConfirm.date_of_birth && formDataWithoutConfirm.date_of_birth !== '') {
-        registerData.date_of_birth = formDataWithoutConfirm.date_of_birth;
+      if (formData.date_of_birth && formData.date_of_birth !== '') {
+        registerData.date_of_birth = formData.date_of_birth;
       }
-      if (formDataWithoutConfirm.favorite_food && formDataWithoutConfirm.favorite_food !== '') {
-        registerData.favorite_food = formDataWithoutConfirm.favorite_food;
+      if (formData.favorite_food && formData.favorite_food !== '') {
+        registerData.favorite_food = formData.favorite_food;
       }
-      
+
       await register(registerData);
       navigate('/');
     } catch (err) {
