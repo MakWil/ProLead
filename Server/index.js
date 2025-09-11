@@ -40,7 +40,7 @@ app.get(/^\/(?!api).*/, (req, res) => {
 });
 
 const port = process.env.PORT || 3001;
-app.listen(port, () => {
+app.listen(port,"0.0.0.0", () => {
   console.log(`🚀 Server running on port ${port}`);
   console.log(`📝 Registration endpoint: http://localhost:${port}/api/register`);
   console.log(`🔑 Login endpoint: http://localhost:${port}/api/login`);
