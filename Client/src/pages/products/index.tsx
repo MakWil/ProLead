@@ -13,6 +13,7 @@ import {
   InputLabel,
   FormControl,
   Chip,
+  TextareaAutosize,
 } from '@mui/material';
 import {
   DataGrid,
@@ -332,6 +333,7 @@ const ProductsPage = () => {
                 onChange={handleFormChange}
                 fullWidth
                 required
+                size="small"
               />
               <TextField
                 name="price"
@@ -341,9 +343,10 @@ const ProductsPage = () => {
                 onChange={handleFormChange}
                 fullWidth
                 required
+                size="small"
                 inputProps={{ step: '0.01', min: '0' }}
               />
-              <FormControl fullWidth>
+              <FormControl fullWidth size="small">
                 <InputLabel>Category</InputLabel>
                 <Select
                   name="category"
@@ -366,9 +369,10 @@ const ProductsPage = () => {
                 value={formValues.stock_quantity}
                 onChange={handleFormChange}
                 fullWidth
+                size="small"
                 inputProps={{ min: '0' }}
               />
-              <FormControl fullWidth>
+              <FormControl fullWidth size="small">
                 <InputLabel>Status</InputLabel>
                 <Select
                   name="status"
@@ -380,14 +384,21 @@ const ProductsPage = () => {
                   <MenuItem value="inactive">Inactive</MenuItem>
                 </Select>
               </FormControl>
-              <TextField
+              <TextareaAutosize
                 name="description"
-                label="Description"
+                minRows={3}
+                placeholder="Description"
                 value={formValues.description}
-                onChange={handleFormChange}
-                fullWidth
-                multiline
-                rows={3}
+                onChange={(e) =>
+                  setFormValues((prev) => ({ ...prev, description: e.target.value }))
+                }
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  fontFamily: 'inherit',
+                  fontSize: '0.9rem',
+                  resize: 'vertical',
+                }}
               />
             </Stack>
           </Box>
@@ -420,6 +431,7 @@ const ProductsPage = () => {
                 onChange={handleFormChange}
                 fullWidth
                 required
+                size="small"
               />
               <TextField
                 name="price"
@@ -429,9 +441,10 @@ const ProductsPage = () => {
                 onChange={handleFormChange}
                 fullWidth
                 required
+                size="small"
                 inputProps={{ step: '0.01', min: '0' }}
               />
-              <FormControl fullWidth>
+              <FormControl fullWidth size="small">
                 <InputLabel>Category</InputLabel>
                 <Select
                   name="category"
@@ -454,9 +467,10 @@ const ProductsPage = () => {
                 value={formValues.stock_quantity}
                 onChange={handleFormChange}
                 fullWidth
+                size="small"
                 inputProps={{ min: '0' }}
               />
-              <FormControl fullWidth>
+              <FormControl fullWidth size="small">
                 <InputLabel>Status</InputLabel>
                 <Select
                   name="status"
@@ -468,14 +482,21 @@ const ProductsPage = () => {
                   <MenuItem value="inactive">Inactive</MenuItem>
                 </Select>
               </FormControl>
-              <TextField
+              <TextareaAutosize
                 name="description"
-                label="Description"
+                minRows={3}
+                placeholder="Description"
                 value={formValues.description}
-                onChange={handleFormChange}
-                fullWidth
-                multiline
-                rows={3}
+                onChange={(e) =>
+                  setFormValues((prev) => ({ ...prev, description: e.target.value }))
+                }
+                style={{
+                  width: '100%',
+                  padding: '8px',
+                  fontFamily: 'inherit',
+                  fontSize: '0.9rem',
+                  resize: 'vertical',
+                }}
               />
             </Stack>
           </Box>

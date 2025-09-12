@@ -1,11 +1,18 @@
-import { IconButton, Stack, TextField, Typography } from '@mui/material';
+import { Button, IconButton, Stack, TextField, Typography } from '@mui/material';
 import { GridSlotsComponentsProps } from '@mui/x-data-grid';
 import IconifyIcon from 'components/base/IconifyIcon';
 
-const CustomDataGridHeader = (props: NonNullable<GridSlotsComponentsProps['toolbar']>) => {
+interface CustomDataGridHeaderProps {
+  title: string;
+  searchText?: string;
+  onSearchChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onAdd?: () => void;
+}
+
+const CustomDataGridHeader = (props: CustomDataGridHeaderProps) => {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    if (props.onChange) {
-      props.onChange(event as React.ChangeEvent<HTMLInputElement>);
+    if (props.onSearchChange) {
+      props.onSearchChange(event as React.ChangeEvent<HTMLInputElement>);
     }
   };
 
@@ -23,28 +30,39 @@ const CustomDataGridHeader = (props: NonNullable<GridSlotsComponentsProps['toolb
         {props.title}
       </Typography>
 
-      <TextField
-        type="text"
-        size="small"
-        color="secondary"
-        variant="filled"
-        value={props.value}
-        onChange={handleChange}
-        placeholder={`Search ${props.flag}...`}
-        InputProps={{
-          endAdornment: (
-            <IconButton
-              title="Clear"
-              aria-label="Clear"
-              size="small"
-              style={{ visibility: props.value ? 'visible' : 'hidden' }}
-              onClick={props.clearSearch}
-            >
-              <IconifyIcon icon="mdi:clear-circle" fontSize="1rem" />
-            </IconButton>
-          ),
-        }}
-      />
+      <Stack direction="row" spacing={2} alignItems="center">
+        <TextField
+          type="text"
+          size="small"
+          color="secondary"
+          variant="filled"
+          value={props.searchText}
+          onChange={handleChange}
+          placeholder="Search..."
+          InputProps={{
+            endAdornment: (
+              <IconButton
+                title="Clear"
+                aria-label="Clear"
+                size="small"
+                style={{ visibility: props.searchText ? 'visible' : 'hidden' }}
+                onClick={() => props.onSearchChange?.({ target: { value: '' } } as React.ChangeEvent<HTMLInputElement>)}
+              >
+                <IconifyIcon icon="mdi:clear-circle" fontSize="1rem" />
+              </IconButton>
+            ),
+          }}
+        />
+        {props.onAdd && (
+          <Button
+            variant="contained"
+            startIcon={<IconifyIcon icon="mdi:plus" />}
+            onClick={props.onAdd}
+          >
+            Add
+          </Button>
+        )}
+      </Stack>
     </Stack>
   );
 };
