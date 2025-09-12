@@ -21,6 +21,7 @@ const CustomersPage = lazy(() => import('pages/customers'));
 const ReportsPage = lazy(() => import('pages/reports'));
 const CouponsPage = lazy(() => import('pages/coupons'));
 const InboxPage = lazy(() => import('pages/inbox'));
+const ProfilePage = lazy(() => import('pages/profile'));
 const NotFoundPage = lazy(() => import('pages/not-found'));
 /* -------------------------------------------------------------------------- */
 
@@ -76,6 +77,10 @@ export const routes = [
           {
             path: paths.inbox,
             element: <InboxPage />,
+          },
+          {
+            path: paths.profile,
+            element: <ProfilePage />,
           },
         ],
       },

@@ -25,14 +25,18 @@ const registerRouter = require('./src/routes/register');
 const loginRouter = require('./src/routes/login');
 const passwordRouter = require('./src/routes/password');
 const usersRouter = require('./src/routes/users');
+const productsRouter = require('./src/routes/products');
 const { router: authRouter } = require('./src/routes/auth');
 const logsRouter = require('./src/routes/logs');
+const profileRouter = require('./src/routes/profile');
 app.use('/api/register', registerRouter);
 app.use('/api/login', loginRouter);
 app.use('/api/password', passwordRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/products', productsRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/logs', logsRouter);
+app.use('/api/profile', profileRouter);
 
 // Catch all handler: send back React's index.html file for any non-API routes
 app.get(/^\/(?!api).*/, (req, res) => {
@@ -46,7 +50,9 @@ app.listen(port,"0.0.0.0", () => {
   console.log(`🔑 Login endpoint: http://localhost:${port}/api/login`);
   console.log(`🔒 Password endpoints: http://localhost:${port}/api/password/*`);
   console.log(`👥 Users/Customers endpoint: http://localhost:${port}/api/users`);
+  console.log(`📦 Products endpoint: http://localhost:${port}/api/products`);
   console.log(`🔐 Auth endpoints: http://localhost:${port}/api/auth/*`);
   console.log(`📊 Logs endpoints: http://localhost:${port}/api/logs`);
+  console.log(`👤 Profile endpoints: http://localhost:${port}/api/profile`);
   console.log(`✅ Winston logging with PostgreSQL JSONB enabled`);
 });

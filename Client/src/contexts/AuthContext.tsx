@@ -4,6 +4,7 @@ interface User {
   id: number;
   email: string;
   name: string;
+  profile_picture?: string;
   age?: number;
   date_of_birth?: string;
   favorite_food?: string;
@@ -16,6 +17,8 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (userData: RegisterData) => Promise<void>;
   logout: () => Promise<void>;
+  updateProfile: (profileData: { name?: string; profile_picture?: string }) => Promise<void>;
+  uploadProfilePicture: (imageData: string, imageType: string) => Promise<void>;
   loading: boolean;
   isAuthenticated: boolean;
 }
@@ -175,12 +178,67 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const updateProfile = async (profileData: { name?: string; profile_picture?: string }) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/profile`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(profileData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setUser(data);
+        localStorage.setItem('user', JSON.stringify(data));
+      } else {
+        throw new Error(data.error || 'Profile update failed');
+      }
+    } catch (error) {
+      console.error('Profile update error:', error);
+      throw error;
+    }
+  };
+
+  const uploadProfilePicture = async (imageData: string, imageType: string) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/profile/upload-picture`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          image_data: imageData,
+          image_type: imageType,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setUser(data);
+        localStorage.setItem('user', JSON.stringify(data));
+      } else {
+        throw new Error(data.error || 'Profile picture upload failed');
+      }
+    } catch (error) {
+      console.error('Profile picture upload error:', error);
+      throw error;
+    }
+  };
+
   const value: AuthContextType = {
     user,
     token,
     login,
     register,
     logout,
+    updateProfile,
+    uploadProfilePicture,
     loading,
     isAuthenticated,
   };

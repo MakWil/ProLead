@@ -55,8 +55,8 @@ const Menuitems: IMenuitems[] = [
     id: uniqueId(),
     title: 'Products',
     icon: ProductsIcon,
-    href: '#!',
-    available: false,
+    href: '/products',
+    available: true,
   },
   {
     id: uniqueId(),
@@ -70,6 +70,13 @@ const Menuitems: IMenuitems[] = [
     title: 'Customers',
     icon: CustomersIcon,
     href: '/customers',
+    available: true,
+  },
+  {
+    id: uniqueId(),
+    title: 'Profile',
+    icon: PersonalSettingsIcon,
+    href: '/profile',
     available: true,
   },
   {
