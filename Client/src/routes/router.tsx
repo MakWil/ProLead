@@ -13,7 +13,6 @@ const LoginPage = lazy(() => import('pages/authentication/login'));
 const SignUpPage = lazy(() => import('pages/authentication/register'));
 const ForgotPasswordPage = lazy(() => import('pages/authentication/forgot-password'));
 const PasswordResetPage = lazy(() => import('pages/authentication/reset-password'));
-const CategoriesPage = lazy(() => import('pages/categories'));
 const OrdersPage = lazy(() => import('pages/orders'));
 const Dashboard = lazy(() => import('pages/dashboard/index'));
 const ProductsPage = lazy(() => import('pages/products'));
@@ -49,10 +48,6 @@ export const routes = [
           {
             index: true,
             element: <Dashboard />,
-          },
-          {
-            path: paths.categories,
-            element: <CategoriesPage />,
           },
           {
             path: paths.products,

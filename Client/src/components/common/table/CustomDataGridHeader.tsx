@@ -1,5 +1,4 @@
 import { Button, IconButton, Stack, TextField, Typography } from '@mui/material';
-import { GridSlotsComponentsProps } from '@mui/x-data-grid';
 import IconifyIcon from 'components/base/IconifyIcon';
 
 interface CustomDataGridHeaderProps {
@@ -46,7 +45,11 @@ const CustomDataGridHeader = (props: CustomDataGridHeaderProps) => {
                 aria-label="Clear"
                 size="small"
                 style={{ visibility: props.searchText ? 'visible' : 'hidden' }}
-                onClick={() => props.onSearchChange?.({ target: { value: '' } } as React.ChangeEvent<HTMLInputElement>)}
+                onClick={() =>
+                  props.onSearchChange?.({
+                    target: { value: '' },
+                  } as React.ChangeEvent<HTMLInputElement>)
+                }
               >
                 <IconifyIcon icon="mdi:clear-circle" fontSize="1rem" />
               </IconButton>

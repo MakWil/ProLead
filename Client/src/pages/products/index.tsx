@@ -13,7 +13,6 @@ import {
   InputLabel,
   FormControl,
   Chip,
-  TextareaAutosize,
 } from '@mui/material';
 import {
   DataGrid,
@@ -34,32 +33,19 @@ interface Product {
   id: number;
   name: string;
   price: number;
-  category: string;
   stock_quantity: number;
-  status: 'active' | 'inactive';
-  description?: string;
+  description: string;
+  status: string;
   created_at: string;
 }
 
 const emptyProduct: Omit<Product, 'id' | 'created_at'> = {
   name: '',
   price: 0,
-  category: '',
   stock_quantity: 0,
   description: '',
   status: 'active',
 };
-
-const categories = [
-  'Electronics',
-  'Clothing',
-  'Food & Beverages',
-  'Books',
-  'Home & Garden',
-  'Sports',
-  'Toys',
-  'Other',
-];
 
 const ProductsPage = () => {
   const [rows, setRows] = useState<Product[]>([]);
@@ -192,7 +178,6 @@ const ProductsPage = () => {
     setFormValues({
       name: product.name,
       price: product.price,
-      category: product.category,
       stock_quantity: product.stock_quantity,
       description: product.description || '',
       status: product.status,
@@ -207,7 +192,6 @@ const ProductsPage = () => {
     return rows.filter(
       (row) =>
         row.name.toLowerCase().includes(searchText.toLowerCase()) ||
-        row.category.toLowerCase().includes(searchText.toLowerCase()) ||
         row.description?.toLowerCase().includes(searchText.toLowerCase()),
     );
   }, [rows, searchText]);
@@ -222,7 +206,6 @@ const ProductsPage = () => {
       width: 100,
       valueFormatter: (value) => `$${value}`,
     },
-    { field: 'category', headerName: 'Category', width: 150 },
     {
       field: 'stock_quantity',
       headerName: 'Stock',
@@ -346,22 +329,6 @@ const ProductsPage = () => {
                 size="small"
                 inputProps={{ step: '0.01', min: '0' }}
               />
-              <FormControl fullWidth size="small">
-                <InputLabel>Category</InputLabel>
-                <Select
-                  name="category"
-                  value={formValues.category}
-                  onChange={handleSelectChange}
-                  label="Category"
-                  required
-                >
-                  {categories.map((category) => (
-                    <MenuItem key={category} value={category}>
-                      {category}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
               <TextField
                 name="stock_quantity"
                 label="Stock Quantity"
@@ -379,25 +346,36 @@ const ProductsPage = () => {
                   value={formValues.status}
                   onChange={handleSelectChange}
                   label="Status"
+                  sx={{ height: 40 }}
                 >
                   <MenuItem value="active">Active</MenuItem>
                   <MenuItem value="inactive">Inactive</MenuItem>
                 </Select>
               </FormControl>
-              <TextareaAutosize
+              <TextField
                 name="description"
-                minRows={3}
-                placeholder="Description"
+                label="Description"
                 value={formValues.description}
                 onChange={(e) =>
                   setFormValues((prev) => ({ ...prev, description: e.target.value }))
                 }
-                style={{
-                  width: '100%',
-                  padding: '8px',
-                  fontFamily: 'inherit',
-                  fontSize: '0.9rem',
-                  resize: 'vertical',
+                fullWidth
+                multiline
+                minRows={6}
+                maxRows={12}
+                size="small"
+                sx={{
+                  '& .MuiInputBase-input': {
+                    padding: '6px 8px',
+                    fontSize: '0.9rem',
+                    lineHeight: 1.4,
+                  },
+                  '& .MuiInputBase-root textarea': {
+                    resize: 'none',
+                  },
+                  '& .MuiInputBase-root': {
+                    alignItems: 'flex-start',
+                  },
                 }}
               />
             </Stack>
@@ -444,22 +422,6 @@ const ProductsPage = () => {
                 size="small"
                 inputProps={{ step: '0.01', min: '0' }}
               />
-              <FormControl fullWidth size="small">
-                <InputLabel>Category</InputLabel>
-                <Select
-                  name="category"
-                  value={formValues.category}
-                  onChange={handleSelectChange}
-                  label="Category"
-                  required
-                >
-                  {categories.map((category) => (
-                    <MenuItem key={category} value={category}>
-                      {category}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
               <TextField
                 name="stock_quantity"
                 label="Stock Quantity"
@@ -477,25 +439,36 @@ const ProductsPage = () => {
                   value={formValues.status}
                   onChange={handleSelectChange}
                   label="Status"
+                  sx={{ height: 40 }}
                 >
                   <MenuItem value="active">Active</MenuItem>
                   <MenuItem value="inactive">Inactive</MenuItem>
                 </Select>
               </FormControl>
-              <TextareaAutosize
+              <TextField
                 name="description"
-                minRows={3}
-                placeholder="Description"
+                label="Description"
                 value={formValues.description}
                 onChange={(e) =>
                   setFormValues((prev) => ({ ...prev, description: e.target.value }))
                 }
-                style={{
-                  width: '100%',
-                  padding: '8px',
-                  fontFamily: 'inherit',
-                  fontSize: '0.9rem',
-                  resize: 'vertical',
+                fullWidth
+                multiline
+                minRows={6}
+                maxRows={12}
+                size="small"
+                sx={{
+                  '& .MuiInputBase-input': {
+                    padding: '6px 8px',
+                    fontSize: '0.9rem',
+                    lineHeight: 1.4,
+                  },
+                  '& .MuiInputBase-root textarea': {
+                    resize: 'none',
+                  },
+                  '& .MuiInputBase-root': {
+                    alignItems: 'flex-start',
+                  },
                 }}
               />
             </Stack>

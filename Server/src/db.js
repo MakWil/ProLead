@@ -127,6 +127,27 @@ async function initializeDatabase() {
     `);
     console.log('✅ Products table indexes created successfully');
 
+    // Create categories table
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS categories (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(100) NOT NULL UNIQUE,
+        description TEXT,
+        status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'inactive')),
+        created_at TIMESTAMP DEFAULT NOW()
+      );
+    `);
+    console.log('✅ Categories table created/verified successfully');
+
+    // Create indexes for categories table
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_categories_name ON categories(name);
+    `);
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_categories_status ON categories(status);
+    `);
+    console.log('✅ Categories table indexes created successfully');
+
     // Add profile_picture column to existing user_info table if it doesn't exist
     try {
       await pool.query(`
