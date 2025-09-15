@@ -40,6 +40,7 @@ async function initializeDatabase() {
         email VARCHAR(255) UNIQUE NOT NULL,
         password VARCHAR(255) NOT NULL,
         name VARCHAR(100) NOT NULL,
+        profile_picture TEXT,
         created_at TIMESTAMP DEFAULT NOW()
       );
     `);
@@ -101,6 +102,68 @@ async function initializeDatabase() {
       CREATE INDEX IF NOT EXISTS idx_user_logs_event_type ON user_logs USING BTREE ((log_data ->> 'event_type'));
     `);
     console.log('✅ User_logs table indexes created successfully');
+
+    // Create products table
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS products (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        price DECIMAL(10,2) NOT NULL,
+        category VARCHAR(100) NOT NULL,
+        stock_quantity INTEGER DEFAULT 0,
+        description TEXT,
+        status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'inactive')),
+        created_at TIMESTAMP DEFAULT NOW()
+      );
+    `);
+    console.log('✅ Products table created/verified successfully');
+
+    // Create indexes for products table
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_products_category ON products(category);
+    `);
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_products_status ON products(status);
+    `);
+    console.log('✅ Products table indexes created successfully');
+
+    // Create categories table
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS categories (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(100) NOT NULL UNIQUE,
+        description TEXT,
+        status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'inactive')),
+        created_at TIMESTAMP DEFAULT NOW()
+      );
+    `);
+    console.log('✅ Categories table created/verified successfully');
+
+    // Create indexes for categories table
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_categories_name ON categories(name);
+    `);
+    await pool.query(`
+      CREATE INDEX IF NOT EXISTS idx_categories_status ON categories(status);
+    `);
+    console.log('✅ Categories table indexes created successfully');
+
+    // Add profile_picture column to existing user_info table if it doesn't exist
+    try {
+      await pool.query(`
+        DO $$
+        BEGIN
+          IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'user_info' AND column_name = 'profile_picture') THEN
+            ALTER TABLE user_info ADD COLUMN profile_picture TEXT;
+            RAISE NOTICE 'Column profile_picture added to user_info table';
+          END IF;
+        END $$;
+      `);
+      console.log('✅ Profile picture column migration completed');
+    } catch (err) {
+      console.error('❌ Failed to add profile_picture column:', err.message);
+      // Don't throw here as it's not critical for basic functionality
+    }
   } catch (err) {
     console.error('❌ Failed to create users table:', err.message);
     throw err;

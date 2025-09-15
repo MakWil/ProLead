@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { SvgIconProps } from '@mui/material';
-import CategoriesIcon from 'components/icons/menu-icons/CategoriesIcon';
 import CouponsIcon from 'components/icons/menu-icons/CouponsIcon';
 import CustomersIcon from 'components/icons/menu-icons/CustomersIcon';
 import ForgotPasswordIcon from 'components/icons/menu-icons/ForgotPasswordIcon';
@@ -55,15 +54,8 @@ const Menuitems: IMenuitems[] = [
     id: uniqueId(),
     title: 'Products',
     icon: ProductsIcon,
-    href: '#!',
-    available: false,
-  },
-  {
-    id: uniqueId(),
-    title: 'Categories',
-    icon: CategoriesIcon,
-    href: '#!',
-    available: false,
+    href: '/products',
+    available: true,
   },
   {
     id: uniqueId(),
@@ -71,6 +63,13 @@ const Menuitems: IMenuitems[] = [
     icon: CustomersIcon,
     href: '/customers',
     available: true,
+  },
+  {
+    id: uniqueId(),
+    title: 'Profile',
+    icon: PersonalSettingsIcon,
+    href: '#!',
+    available: false,
   },
   {
     id: uniqueId(),
@@ -134,8 +133,8 @@ const Menuitems: IMenuitems[] = [
     id: uniqueId(),
     title: 'Personal Settings',
     icon: PersonalSettingsIcon,
-    href: '/settings/#!',
-    available: false,
+    href: '/profile',
+    available: true,
   },
   {
     id: uniqueId(),

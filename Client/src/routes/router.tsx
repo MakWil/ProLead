@@ -13,7 +13,6 @@ const LoginPage = lazy(() => import('pages/authentication/login'));
 const SignUpPage = lazy(() => import('pages/authentication/register'));
 const ForgotPasswordPage = lazy(() => import('pages/authentication/forgot-password'));
 const PasswordResetPage = lazy(() => import('pages/authentication/reset-password'));
-const CategoriesPage = lazy(() => import('pages/categories'));
 const OrdersPage = lazy(() => import('pages/orders'));
 const Dashboard = lazy(() => import('pages/dashboard/index'));
 const ProductsPage = lazy(() => import('pages/products'));
@@ -21,6 +20,7 @@ const CustomersPage = lazy(() => import('pages/customers'));
 const ReportsPage = lazy(() => import('pages/reports'));
 const CouponsPage = lazy(() => import('pages/coupons'));
 const InboxPage = lazy(() => import('pages/inbox'));
+const ProfilePage = lazy(() => import('pages/profile'));
 const NotFoundPage = lazy(() => import('pages/not-found'));
 /* -------------------------------------------------------------------------- */
 
@@ -50,10 +50,6 @@ export const routes = [
             element: <Dashboard />,
           },
           {
-            path: paths.categories,
-            element: <CategoriesPage />,
-          },
-          {
             path: paths.products,
             element: <ProductsPage />,
           },
@@ -76,6 +72,10 @@ export const routes = [
           {
             path: paths.inbox,
             element: <InboxPage />,
+          },
+          {
+            path: paths.profile,
+            element: <ProfilePage />,
           },
         ],
       },
