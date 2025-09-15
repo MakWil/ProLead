@@ -41,7 +41,8 @@ async function initializeDatabase() {
         password VARCHAR(255) NOT NULL,
         name VARCHAR(100) NOT NULL,
         profile_picture TEXT,
-        created_at TIMESTAMP DEFAULT NOW()
+        created_at TIMESTAMP DEFAULT NOW(),
+        updated_at TIMESTAMP DEFAULT NOW()
       );
     `);
     console.log('✅ User_info table created/verified successfully');
@@ -162,6 +163,23 @@ async function initializeDatabase() {
       console.log('✅ Profile picture column migration completed');
     } catch (err) {
       console.error('❌ Failed to add profile_picture column:', err.message);
+      // Don't throw here as it's not critical for basic functionality
+    }
+
+    // Add updated_at column to existing user_info table if it doesn't exist
+    try {
+      await pool.query(`
+        DO $$
+        BEGIN
+          IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'user_info' AND column_name = 'updated_at') THEN
+            ALTER TABLE user_info ADD COLUMN updated_at TIMESTAMP DEFAULT NOW();
+            RAISE NOTICE 'Column updated_at added to user_info table';
+          END IF;
+        END $$;
+      `);
+      console.log('✅ Updated_at column migration completed');
+    } catch (err) {
+      console.error('❌ Failed to add updated_at column:', err.message);
       // Don't throw here as it's not critical for basic functionality
     }
   } catch (err) {

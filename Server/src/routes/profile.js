@@ -29,7 +29,7 @@ const authenticateToken = (req, res, next) => {
 // Get user profile
 router.get('/', authenticateToken, async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user.userId;
 
     const result = await pool.query(
       'SELECT id, email, name, profile_picture, created_at FROM user_info WHERE id = $1',
@@ -59,7 +59,7 @@ router.put('/', [
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const userId = req.user.id;
+    const userId = req.user.userId;
     const { name, profile_picture } = req.body;
 
     // Build dynamic update query
