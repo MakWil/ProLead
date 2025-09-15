@@ -90,6 +90,13 @@ const authLogger = {
       user_agent: req.get('User-Agent'),
       ...additionalData
     });
+  },
+
+  logEvent: (eventType, additionalData = {}) => {
+    logger.info('User event', {
+      event_type: eventType,
+      ...additionalData
+    });
   }
 };
 
