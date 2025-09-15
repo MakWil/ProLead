@@ -33,6 +33,7 @@ interface Product {
   id: number;
   name: string;
   price: number;
+  category: string;
   stock_quantity: number;
   description: string;
   status: string;
@@ -42,6 +43,7 @@ interface Product {
 const emptyProduct: Omit<Product, 'id' | 'created_at'> = {
   name: '',
   price: 0,
+  category: '',
   stock_quantity: 0,
   description: '',
   status: 'active',
@@ -178,6 +180,7 @@ const ProductsPage = () => {
     setFormValues({
       name: product.name,
       price: product.price,
+      category: product.category,
       stock_quantity: product.stock_quantity,
       description: product.description || '',
       status: product.status,
@@ -192,6 +195,7 @@ const ProductsPage = () => {
     return rows.filter(
       (row) =>
         row.name.toLowerCase().includes(searchText.toLowerCase()) ||
+        row.category.toLowerCase().includes(searchText.toLowerCase()) ||
         row.description?.toLowerCase().includes(searchText.toLowerCase()),
     );
   }, [rows, searchText]);
@@ -200,6 +204,7 @@ const ProductsPage = () => {
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 70 },
     { field: 'name', headerName: 'Name', width: 200, flex: 1 },
+    { field: 'category', headerName: 'Category', width: 150 },
     {
       field: 'price',
       headerName: 'Price',
@@ -319,6 +324,15 @@ const ProductsPage = () => {
                 size="small"
               />
               <TextField
+                name="category"
+                label="Category"
+                value={formValues.category}
+                onChange={handleFormChange}
+                fullWidth
+                required
+                size="small"
+              />
+              <TextField
                 name="price"
                 label="Price"
                 type="number"
@@ -406,6 +420,15 @@ const ProductsPage = () => {
                 name="name"
                 label="Product Name"
                 value={formValues.name}
+                onChange={handleFormChange}
+                fullWidth
+                required
+                size="small"
+              />
+              <TextField
+                name="category"
+                label="Category"
+                value={formValues.category}
                 onChange={handleFormChange}
                 fullWidth
                 required
