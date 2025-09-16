@@ -2,6 +2,9 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const { pool } = require('../db');
 const { authLogger } = require('../utils/logger');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 
 const router = express.Router();
 
@@ -113,24 +116,68 @@ router.put('/', [
   }
 });
 
-// Upload profile picture (base64 encoded)
+// Configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    const uploadPath = path.join(__dirname, '../../profile-pictures');
+    // Ensure the directory exists
+    if (!fs.existsSync(uploadPath)) {
+      fs.mkdirSync(uploadPath, { recursive: true });
+    }
+    cb(null, uploadPath);
+  },
+  filename: function (req, file, cb) {
+    const userId = req.user.userId;
+    const fileExtension = path.extname(file.originalname);
+    const fileName = `${userId}ProfilePicture${fileExtension}`;
+    cb(null, fileName);
+  }
+});
+
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024 // 5MB limit
+  },
+  fileFilter: function (req, file, cb) {
+    const allowedTypes = /jpeg|jpg|png|gif/;
+    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
+    
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb(new Error('Only image files (jpeg, jpg, png, gif) are allowed!'));
+    }
+  }
+});
+
+// Upload profile picture
 router.post('/upload-picture', [
   authenticateToken,
-  body('image_data').notEmpty().withMessage('Image data is required'),
-  body('image_type').isIn(['image/jpeg', 'image/png', 'image/gif']).withMessage('Invalid image type')
+  upload.single('profile_picture')
 ], async (req, res) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
     }
 
-    const userId = req.user.id;
-    const { image_data, image_type } = req.body;
+    const userId = req.user.userId;
+    const fileName = req.file.filename;
+    const profilePictureUrl = `/profile-pictures/${fileName}`;
 
-    // For now, we'll store the base64 data directly
-    // In production, you'd want to upload to a cloud storage service
-    const profilePictureUrl = `data:${image_type};base64,${image_data}`;
+    // Delete old profile picture if it exists
+    const userResult = await pool.query(
+      'SELECT profile_picture FROM user_info WHERE id = $1',
+      [userId]
+    );
+
+    if (userResult.rows.length > 0 && userResult.rows[0].profile_picture) {
+      const oldPicturePath = path.join(__dirname, '../../', userResult.rows[0].profile_picture);
+      if (fs.existsSync(oldPicturePath)) {
+        fs.unlinkSync(oldPicturePath);
+      }
+    }
 
     const result = await pool.query(
       'UPDATE user_info SET profile_picture = $1 WHERE id = $2 RETURNING id, email, name, profile_picture, created_at',
@@ -145,7 +192,8 @@ router.post('/upload-picture', [
     authLogger.logEvent('profile_picture_update', {
       userId: userId,
       email: result.rows[0].email,
-      imageType: image_type,
+      fileName: fileName,
+      fileSize: req.file.size,
       timestamp: new Date().toISOString()
     });
 

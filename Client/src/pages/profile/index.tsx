@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   Box,
   Card,
@@ -7,20 +7,25 @@ import {
   Typography,
   TextField,
   Button,
-  Avatar,
-  IconButton,
   CircularProgress,
 } from '@mui/material';
-import { PhotoCamera, Save } from '@mui/icons-material';
+import { Save } from '@mui/icons-material';
 import { useAuth } from 'contexts/AuthContext';
+import ProfilePicture from 'components/auth/ProfilePicture';
 
 const ProfilePage = () => {
-  const { user, updateProfile, uploadProfilePicture } = useAuth();
+  const { user, updateProfile } = useAuth();
   const [name, setName] = useState(user?.name || '');
   const [loading, setLoading] = useState(false);
-  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+
+  // Update name when user data changes
+  useEffect(() => {
+    if (user?.name) {
+      setName(user.name);
+    }
+  }, [user?.name]);
 
   const handleNameChange = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,48 +45,6 @@ const ProfilePage = () => {
       setError(String(err) || 'Failed to update profile');
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    // Validate file type
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
-    if (!allowedTypes.includes(file.type)) {
-      setError('Please upload a JPEG, PNG, or GIF image');
-      return;
-    }
-
-    // Validate file size (max 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      setError('Image size must be less than 5MB');
-      return;
-    }
-
-    setUploading(true);
-    setError('');
-    setSuccess('');
-
-    try {
-      // Convert file to base64
-      const reader = new FileReader();
-      reader.onload = async (event) => {
-        const base64Data = (event.target?.result as string).split(',')[1]; // Remove data URL prefix
-        try {
-          await uploadProfilePicture(base64Data, file.type);
-          setSuccess('Profile picture updated successfully!');
-        } catch (err: unknown) {
-          setError(err instanceof Error ? err.message : 'Failed to upload profile picture');
-        } finally {
-          setUploading(false);
-        }
-      };
-      reader.readAsDataURL(file);
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Failed to process image');
-      setUploading(false);
     }
   };
 
@@ -121,60 +84,7 @@ const ProfilePage = () => {
 
             <Stack spacing={4}>
               {/* Profile Picture Section */}
-              <Box sx={{ textAlign: 'center' }}>
-                <Stack direction="column" alignItems="center" spacing={2}>
-                  <Avatar
-                    src={user?.profile_picture}
-                    alt={user?.name}
-                    sx={{
-                      width: 120,
-                      height: 120,
-                      border: '3px solid',
-                      borderColor: 'primary.main',
-                    }}
-                  >
-                    {user?.name?.charAt(0)?.toUpperCase()}
-                  </Avatar>
-
-                  <Box>
-                    <input
-                      accept="image/jpeg,image/png,image/gif"
-                      id="profile-picture-upload"
-                      type="file"
-                      style={{ display: 'none' }}
-                      onChange={handleImageUpload}
-                      disabled={uploading}
-                    />
-                    <label htmlFor="profile-picture-upload">
-                      <IconButton
-                        component="span"
-                        color="primary"
-                        disabled={uploading}
-                        sx={{
-                          border: '1px solid',
-                          borderColor: 'primary.main',
-                          borderRadius: 1,
-                          px: 2,
-                          py: 1,
-                        }}
-                      >
-                        {uploading ? (
-                          <CircularProgress size={20} />
-                        ) : (
-                          <>
-                            <PhotoCamera sx={{ mr: 1 }} />
-                            <Typography variant="button">Change Photo</Typography>
-                          </>
-                        )}
-                      </IconButton>
-                    </label>
-                  </Box>
-
-                  <Typography variant="caption" color="text.secondary">
-                    Max file size: 5MB. Formats: JPEG, PNG, GIF
-                  </Typography>
-                </Stack>
-              </Box>
+              <ProfilePicture />
 
               {/* Profile Form */}
               <Box component="form" onSubmit={handleNameChange}>
