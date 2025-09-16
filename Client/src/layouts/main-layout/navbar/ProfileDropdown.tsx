@@ -12,7 +12,7 @@ import {
 import AvatarImage from 'assets/images/avatar.svg';
 import IconifyIcon from 'components/base/IconifyIcon';
 import { profileOptions } from 'data/navbar/menu-data';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from 'contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -21,6 +21,16 @@ const ProfileDropdown = () => {
   const open = Boolean(anchorEl);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [profilePicture, setProfilePicture] = useState<string | null>(null);
+
+  // Update profile picture when user data changes
+  useEffect(() => {
+    if (user?.profile_picture) {
+      setProfilePicture(user.profile_picture);
+    } else {
+      setProfilePicture(null);
+    }
+  }, [user?.profile_picture]);
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -53,14 +63,16 @@ const ProfileDropdown = () => {
           }}
         >
           <Avatar
-            alt="avatar"
+            alt={user?.name || 'User'}
             variant="rounded"
-            src={AvatarImage}
+            src={profilePicture || AvatarImage}
             sx={{
               height: 36,
               width: 36,
             }}
-          />
+          >
+            {!profilePicture && user?.name?.charAt(0)?.toUpperCase()}
+          </Avatar>
           <Typography
             variant="subtitle1"
             sx={{
