@@ -20,6 +20,9 @@ app.use((req, res, next) => {
 // Serve static files from the React app source directory
 app.use(express.static(path.join(__dirname, '../Client/dist')));
 
+// Serve profile pictures statically
+app.use('/profile-pictures', express.static(path.join(__dirname, 'profile-pictures')));
+
 // Routes
 const registerRouter = require('./src/routes/register');
 const loginRouter = require('./src/routes/login');

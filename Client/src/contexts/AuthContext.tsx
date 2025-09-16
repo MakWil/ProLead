@@ -19,6 +19,7 @@ interface AuthContextType {
   logout: () => Promise<void>;
   updateProfile: (profileData: { name?: string; profile_picture?: string }) => Promise<void>;
   uploadProfilePicture: (imageData: string, imageType: string) => Promise<void>;
+  uploadProfilePictureFile: (file: File) => Promise<void>;
   loading: boolean;
   isAuthenticated: boolean;
 }
@@ -46,7 +47,7 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-const API_BASE_URL = 'http://localhost:3001/api';
+const API_BASE_URL = `${import.meta.env.VITE_SERVER_BASE_URL || 'http://localhost:3001'}/api`;
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -231,6 +232,37 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const uploadProfilePictureFile = async (file: File) => {
+    try {
+      const formData = new FormData();
+      formData.append('profile_picture', file);
+
+      const response = await fetch(`${API_BASE_URL}/profile/upload-picture`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Construct the full URL for the uploaded picture
+        const serverBaseUrl = import.meta.env.VITE_SERVER_BASE_URL || 'http://localhost:3001';
+        const fullPictureUrl = `${serverBaseUrl}${data.profile_picture}`;
+        const updatedUser = { ...data, profile_picture: fullPictureUrl };
+        setUser(updatedUser);
+        localStorage.setItem('user', JSON.stringify(updatedUser));
+      } else {
+        throw new Error(data.error || 'Profile picture upload failed');
+      }
+    } catch (error) {
+      console.error('Profile picture file upload error:', error);
+      throw error;
+    }
+  };
+
   const value: AuthContextType = {
     user,
     token,
@@ -239,6 +271,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     logout,
     updateProfile,
     uploadProfilePicture,
+    uploadProfilePictureFile,
     loading,
     isAuthenticated,
   };
