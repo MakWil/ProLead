@@ -52,7 +52,8 @@ const PasswordResetForm = () => {
 
     setLoading(true);
     try {
-      const verifyRes = await fetch('http://localhost:3001/api/password/verify-otp', {
+      const API_BASE_URL = `${import.meta.env.VITE_SERVER_BASE_URL || 'http://localhost:3001'}/api`;
+      const verifyRes = await fetch(`${API_BASE_URL}/password/verify-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp }),
@@ -60,7 +61,7 @@ const PasswordResetForm = () => {
       const verifyData = await verifyRes.json();
       if (!verifyRes.ok || !verifyData.valid) throw new Error(verifyData.error || 'Invalid OTP');
 
-      const resetRes = await fetch('http://localhost:3001/api/password/reset', {
+      const resetRes = await fetch(`${API_BASE_URL}/password/reset`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, otp, new_password: password }),
