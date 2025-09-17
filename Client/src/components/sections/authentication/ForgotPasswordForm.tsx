@@ -16,7 +16,8 @@ const ForgotPasswordForm = () => {
     setInfo('');
 
     try {
-      const res = await fetch('http://localhost:3001/api/password/request-otp', {
+      const API_BASE_URL = `${import.meta.env.VITE_SERVER_BASE_URL || 'http://localhost:3001'}/api`;
+      const res = await fetch(`${API_BASE_URL}/password/request-otp`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
