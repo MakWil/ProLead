@@ -7,7 +7,12 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://127.0.0.1:5173', 'http://10.200.1.2:5173'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -51,14 +56,14 @@ app.get(/^\/(?!api).*/, (req, res) => {
 const port = process.env.PORT || 3001;
 app.listen(port,"0.0.0.0", () => {
   console.log(`🚀 Server running on port ${port}`);
-  console.log(`📝 Registration endpoint: http://localhost:${port}/api/register`);
-  console.log(`🔑 Login endpoint: http://localhost:${port}/api/login`);
-  console.log(`🔒 Password endpoints: http://localhost:${port}/api/password/*`);
-  console.log(`👥 Users/Customers endpoint: http://localhost:${port}/api/users`);
-  console.log(`📦 Products endpoint: http://localhost:${port}/api/products`);
-  console.log(`🏷️  Categories endpoint: http://localhost:${port}/api/categories`);
-  console.log(`🔐 Auth endpoints: http://localhost:${port}/api/auth/*`);
-  console.log(`📊 Logs endpoints: http://localhost:${port}/api/logs`);
-  console.log(`👤 Profile endpoints: http://localhost:${port}/api/profile`);
+  console.log(`📝 Registration endpoint: http://10.200.1.2:${port}/api/register`);
+  console.log(`🔑 Login endpoint: http://10.200.1.2:${port}/api/login`);
+  console.log(`🔒 Password endpoints: http://10.200.1.2:${port}/api/password/*`);
+  console.log(`👥 Users/Customers endpoint: http://10.200.1.2:${port}/api/users`);
+  console.log(`📦 Products endpoint: http://10.200.1.2:${port}/api/products`);
+  console.log(`🏷️  Categories endpoint: http://10.200.1.2:${port}/api/categories`);
+  console.log(`🔐 Auth endpoints: http://10.200.1.2:${port}/api/auth/*`);
+  console.log(`📊 Logs endpoints: http://10.200.1.2:${port}/api/logs`);
+  console.log(`👤 Profile endpoints: http://10.200.1.2:${port}/api/profile`);
   console.log(`✅ Winston logging with PostgreSQL JSONB enabled`);
 });
