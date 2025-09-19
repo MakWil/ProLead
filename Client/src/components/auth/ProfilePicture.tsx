@@ -75,7 +75,10 @@ const ProfilePicture: React.FC<ProfilePictureProps> = ({ currentPicture }) => {
 
   const getAvatarSrc = () => {
     if (currentProfilePicture) {
-      return currentProfilePicture;
+      // Add cache-busting timestamp if not already present
+      const timestamp = new Date().getTime();
+      const separator = currentProfilePicture.includes('?') ? '&' : '?';
+      return `${currentProfilePicture}${separator}t=${timestamp}`;
     }
     return undefined; // This will show the default avatar
   };
