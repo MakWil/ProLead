@@ -84,7 +84,7 @@ const uploadFileToS3 = async (file, userId) => {
     };
 
     const result = await getS3().upload(params).promise();
-    return result.Location; // Return the full S3 URL directly
+    return fileName; // Return only the filename instead of full URL
   } catch (error) {
     console.error('Error uploading file to S3:', error);
     throw error;
@@ -135,6 +135,20 @@ const extractKeyFromUrl = (url) => {
     console.error('Error extracting key from URL:', error);
     return null;
   }
+};
+
+// Function to construct full URL from filename
+const constructFullUrl = (fileName) => {
+  if (!fileName) return null;
+  
+  const endpoint = process.env.LINODE_ENDPOINT || 'https://id-cgk-1.linodeobjects.com';
+  const bucketName = process.env.LINODE_BUCKET_NAME;
+  
+  // Remove leading slash from filename if present
+  const cleanFileName = fileName.startsWith('/') ? fileName.substring(1) : fileName;
+  
+  // Construct full URL: https://endpoint/bucket-name/filename
+  return `${endpoint}/${bucketName}/${cleanFileName}`;
 };
 
 // Function to get signed URL for private files (if needed)
@@ -193,6 +207,7 @@ module.exports = {
   deleteFile,
   extractKeyFromUrl,
   getSignedUrl,
+  constructFullUrl,
   getS3,
   testS3Connection
 };
