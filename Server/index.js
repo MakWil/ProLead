@@ -73,6 +73,17 @@ app.get(/^\/(?!api).*/, (req, res) => {
   res.sendFile(path.join(__dirname, '../Client/dist/index.html'));
 });
 
+// Test S3 connection if S3 is configured
+if (process.env.LINODE_ACCESS_KEY && process.env.LINODE_SECRET_KEY && process.env.LINODE_ENDPOINT) {
+  const { testS3Connection } = require('./src/utils/s3Service');
+  // Test S3 connection asynchronously
+  testS3Connection().catch(err => {
+    console.error('S3 connection test failed during startup:', err.message);
+  });
+} else {
+  console.log('⚠️  S3 not configured - profile picture upload will not work');
+}
+
 const port = process.env.PORT || 3001;
 app.listen(port,"0.0.0.0", () => {
   console.log(`🚀 Server running on port ${port}`);

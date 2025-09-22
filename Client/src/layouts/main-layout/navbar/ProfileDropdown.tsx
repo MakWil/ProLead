@@ -26,7 +26,10 @@ const ProfileDropdown = () => {
   // Update profile picture when user data changes
   useEffect(() => {
     if (user?.profile_picture) {
-      setProfilePicture(user.profile_picture);
+      // Add cache-busting timestamp to prevent browser caching
+      const timestamp = new Date().getTime();
+      const separator = user.profile_picture.includes('?') ? '&' : '?';
+      setProfilePicture(`${user.profile_picture}${separator}t=${timestamp}`);
     } else {
       setProfilePicture(null);
     }

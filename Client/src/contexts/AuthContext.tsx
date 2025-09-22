@@ -248,10 +248,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const data = await response.json();
 
       if (response.ok) {
-        // Construct the full URL for the uploaded picture
-        const serverBaseUrl = import.meta.env.VITE_SERVER_BASE_URL || 'http://localhost:3001';
-        const fullPictureUrl = `${serverBaseUrl}${data.profile_picture}`;
-        const updatedUser = { ...data, profile_picture: fullPictureUrl };
+        // Use the full S3 URL directly (no need to add server base URL)
+        const updatedUser = { ...data, profile_picture: data.profile_picture };
         setUser(updatedUser);
         localStorage.setItem('user', JSON.stringify(updatedUser));
       } else {
