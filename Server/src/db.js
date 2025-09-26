@@ -173,7 +173,7 @@ async function initializeDatabase() {
 
   
     await pool.query(`
-      CREATE TABLE product_properties (
+      CREATE TABLE IF NOT EXISTS product_properties (
         id SERIAL PRIMARY KEY,
         product_id INTEGER NOT NULL REFERENCES products(productID) ON DELETE CASCADE,
         property_id INTEGER NOT NULL REFERENCES properties(property_id) ON DELETE CASCADE,

@@ -179,20 +179,21 @@ const PropertiesPage = () => {
   // Define columns
   const columns: GridColDef[] = [
     {
-      field: 'property_description',
-      headerName: 'Description',
-      width: 100,
+      field: 'property_id',
+      headerName: 'ID',
+      width: 80,
+      sortable: true,
     },
-
+    {
+      field: 'property_name',
+      headerName: 'Property Name',
+      width: 200,
+      flex: 1,
+    },
     {
       field: 'property_description',
       headerName: 'Description',
-      width: 100,
-    },
-    {
-      field: 'property_description',
-      headerName: 'Description',
-      width: 100,
+      width: 300,
       flex: 1,
       renderCell: (params: GridRenderCellParams) => (
         <Box
