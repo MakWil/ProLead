@@ -58,6 +58,8 @@ const categoriesRouter = require('./src/routes/categories');
 const { router: authRouter } = require('./src/routes/auth');
 const logsRouter = require('./src/routes/logs');
 const profileRouter = require('./src/routes/profile');
+const propertiesRouter = require('./src/routes/properties');
+const productPropertiesRouter = require('./src/routes/product-properties');
 app.use('/api/register', registerRouter);
 app.use('/api/login', loginRouter);
 app.use('/api/password', passwordRouter);
@@ -67,6 +69,8 @@ app.use('/api/categories', categoriesRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/logs', logsRouter);
 app.use('/api/profile', profileRouter);
+app.use('/api/properties', propertiesRouter);
+app.use('/api/product-properties', productPropertiesRouter);
 
 // Catch all handler: send back React's index.html file for any non-API routes
 app.get(/^\/(?!api).*/, (req, res) => {
@@ -96,5 +100,7 @@ app.listen(port,"0.0.0.0", () => {
   console.log(`🔐 Auth endpoints: http://10.200.1.2:${port}/api/auth/*`);
   console.log(`📊 Logs endpoints: http://10.200.1.2:${port}/api/logs`);
   console.log(`👤 Profile endpoints: http://10.200.1.2:${port}/api/profile`);
+  console.log(`🏠 Properties endpoints: http://10.200.1.2:${port}/api/properties`);
+  console.log(`📈 Product-properties endpoints: http://10.200.1.2:${port}/api/product-properties`);
   console.log(`✅ Winston logging with PostgreSQL JSONB enabled`);
 });

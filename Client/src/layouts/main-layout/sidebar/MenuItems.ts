@@ -9,6 +9,7 @@ import InboxIcon from 'components/icons/menu-icons/InboxIcon';
 import OrderIcon from 'components/icons/menu-icons/OrderIcon';
 import PersonalSettingsIcon from 'components/icons/menu-icons/PersonalSettingsIcon';
 import ProductsIcon from 'components/icons/menu-icons/ProductsIcon';
+import PropertiesIcon from 'components/icons/menu-icons/PropertiesIcon';
 import ReportsIcon from 'components/icons/menu-icons/ReportsIcon';
 import ResetPasswordIcon from 'components/icons/menu-icons/ResetPasswordIcon';
 import SignUpIcon from 'components/icons/menu-icons/SignInIcon';
@@ -55,6 +56,13 @@ const Menuitems: IMenuitems[] = [
     title: 'Products',
     icon: ProductsIcon,
     href: '/products',
+    available: true,
+  },
+  {
+    id: uniqueId(),
+    title: 'Properties',
+    icon: PropertiesIcon,
+    href: '/properties',
     available: true,
   },
   {

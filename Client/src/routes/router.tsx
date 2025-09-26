@@ -16,6 +16,7 @@ const PasswordResetPage = lazy(() => import('pages/authentication/reset-password
 const OrdersPage = lazy(() => import('pages/orders'));
 const Dashboard = lazy(() => import('pages/dashboard/index'));
 const ProductsPage = lazy(() => import('pages/products'));
+const PropertiesPage = lazy(() => import('pages/properties'));
 const CustomersPage = lazy(() => import('pages/customers'));
 const ReportsPage = lazy(() => import('pages/reports'));
 const CouponsPage = lazy(() => import('pages/coupons'));
@@ -52,6 +53,10 @@ export const routes = [
           {
             path: paths.products,
             element: <ProductsPage />,
+          },
+          {
+            path: paths.properties,
+            element: <PropertiesPage />,
           },
           {
             path: paths.customers,
